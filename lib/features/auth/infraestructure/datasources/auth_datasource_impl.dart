@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:teslo_shop/config/constants/environment.dart';
 import 'package:teslo_shop/features/auth/domain/domain.dart';
 import 'package:teslo_shop/features/auth/infraestructure/infrastructure.dart';
-import 'package:teslo_shop/features/auth/infraestructure/mappers/user_mapper.dart';
 
 // patter adapter para envolver dio y si queremos posteriormente cambiarlo por otra clase
 
