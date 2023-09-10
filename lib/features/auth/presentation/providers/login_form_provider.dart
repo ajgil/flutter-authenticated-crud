@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:formz/formz.dart';
+import 'package:teslo_shop/features/auth/presentation/providers/auth_provider.dart';
 import 'package:teslo_shop/features/shared/shared.dart';
 // como crear el provider
 
@@ -8,14 +9,19 @@ import 'package:teslo_shop/features/shared/shared.dart';
 // autoDispose -> limpia el formulario una vez llamado
 final loginFormProvider =
     StateNotifierProvider.autoDispose<LoginFormNotifier, LoginFormState>((ref) {
-  return LoginFormNotifier();
+
+      final loginUserCallback = ref.watch(authProvider.notifier).loginUser;
+  return LoginFormNotifier(
+    loginUserCallback: loginUserCallback
+  );
 });
 
-
 // 2 - Como implementamos un notifier (statenotifier)
+
 class LoginFormNotifier extends StateNotifier<LoginFormState> {
+  final Function(String, String) loginUserCallback;
   // en el constructor siempre se llama la construcción del estado inicial
-  LoginFormNotifier() : super(LoginFormState());
+  LoginFormNotifier({required this.loginUserCallback}) : super(LoginFormState());
 
   // metodos
   onEmailChange(String value) {
@@ -36,7 +42,7 @@ class LoginFormNotifier extends StateNotifier<LoginFormState> {
     _touchEveryField();
     if (!state.isValid) return;
 
-    print(state);
+    loginUserCallback(state.email.value, state.password.value);
   }
 
   _touchEveryField() {
