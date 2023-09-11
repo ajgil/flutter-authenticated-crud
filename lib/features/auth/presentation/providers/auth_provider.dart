@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:teslo_shop/features/auth/domain/domain.dart';
 import 'package:teslo_shop/features/auth/infraestructure/infrastructure.dart';
@@ -26,7 +28,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
       
     } on WrongCredentials {
       logout('Credenciales incorrectas');
-    } catch (e) {
+
+    } on ConnectionTimeout {
+      logout('Tiempo agotado');
+      
+    }
+    catch (e) {
       logout('Error no controlado');
     }
     
