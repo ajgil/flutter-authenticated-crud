@@ -73,6 +73,7 @@ class _RegisterForm extends StatelessWidget {
       child: Column(
         children: [
           const SizedBox( height: 50 ),
+          //const Spacer(flex: 2), --> si tuvieramos problemas en bottom overflow
           Text('Nueva cuenta', style: textStyles.titleMedium ),
           const SizedBox( height: 50 ),
 

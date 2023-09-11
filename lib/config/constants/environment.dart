@@ -1,5 +1,5 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
+// patron adaptador para crear un wrapper  de dotenv
 class Environment {
   
   static initEnvironment() async {
