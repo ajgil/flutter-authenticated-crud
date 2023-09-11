@@ -18,22 +18,23 @@ class AuthDatasourceImpl extends AuthDataSource {
 
   @override
   Future<User> login(String email, String password) async {
-    try{
-      final response = await dio.post('/auth/login', data: {
-        'email': email,
-        'password': password
-      });
+    try {
+      final response = await dio
+          .post('/auth/login', data: {'email': email, 'password': password});
 
       final user = UserMapper.userJsonToEntity(response.data); //mapper
       return user;
-
-    } on DioException catch(e){
-      if (e.response?.statusCode == 401 ) throw WrongCredentials();
-      if (e.type == DioExceptionType.connectionTimeout ) throw ConnectionTimeout();
-      throw CustomError('Something wrong happened', 1);
-    }
-    catch (e) {
-        throw CustomError('Something wrong happened', 1);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        throw CustomError(
+            e.response?.data['message'] ?? 'Creadenciales incorrectas');
+      }
+      if (e.type == DioExceptionType.connectionTimeout) {
+        throw CustomError('Comprueba la conexión a internet');
+      }
+      throw Exception();
+    } catch (e) {
+      throw Exception();
     }
   }
 

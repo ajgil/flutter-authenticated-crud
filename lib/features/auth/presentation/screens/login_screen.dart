@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:teslo_shop/features/auth/presentation/providers/auth_provider.dart';
 import 'package:teslo_shop/features/auth/presentation/providers/login_form_provider.dart';
 import 'package:teslo_shop/features/shared/shared.dart';
 
@@ -51,11 +52,21 @@ class LoginScreen extends StatelessWidget {
 // en un ConsumerWidget
 class _LoginForm extends ConsumerWidget {
   const _LoginForm();
+  void showSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message))
+    );
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // para tener acceso al state, no al NOTIFIER!!
     final loginForm = ref.watch(loginFormProvider);
+    ref.listen(authProvider, (previous, next) { 
+      if(next.errorMessage.isEmpty) return;
+      showSnackBar( context, next.errorMessage);
+    });
 
     final textStyles = Theme.of(context).textTheme;
 
