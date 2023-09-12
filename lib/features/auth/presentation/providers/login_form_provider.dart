@@ -5,7 +5,7 @@ import 'package:teslo_shop/features/shared/shared.dart';
 // como crear el provider
 
 
-// 3 - StateNotifierProvider -> el consumidor desde fuera
+//! 3 - StateNotifierProvider -> el consumidor desde fuera
 // autoDispose -> limpia el formulario una vez llamado
 final loginFormProvider =
     StateNotifierProvider.autoDispose<LoginFormNotifier, LoginFormState>((ref) {
@@ -16,7 +16,7 @@ final loginFormProvider =
   );
 });
 
-// 2 - Como implementamos un notifier (statenotifier)
+//! 2 - Como implementamos un notifier (statenotifier)
 
 class LoginFormNotifier extends StateNotifier<LoginFormState> {
   final Function(String, String) loginUserCallback;
@@ -58,7 +58,7 @@ class LoginFormNotifier extends StateNotifier<LoginFormState> {
   }
 }
 
-// 1 - State del provider
+//! 1 - State del provider
 class LoginFormState {
   // como queremos que luzca el
   final bool isPosting;

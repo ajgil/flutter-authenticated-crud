@@ -4,7 +4,7 @@ import 'package:teslo_shop/features/auth/infraestructure/infrastructure.dart';
 import 'package:teslo_shop/features/shared/infrastructure/services/key_value_storage_service.dart';
 import 'package:teslo_shop/features/shared/infrastructure/services/key_value_storage_service_impl.dart';
 
-// paso 2 crear el provider
+//! paso 2 crear el provider
 final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
   // estos metodos terminan delegando al repositorio por tanto creamos
   final authRepository = AuthRepositoryImpl();
@@ -16,14 +16,14 @@ final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
       keyValueStorageService: keyValueStorageService);
 });
 
-// paso 1 crear los métodos y el state
+//! paso 1 crear los métodos y el state
 class AuthNotifier extends StateNotifier<AuthState> {
   final AuthRepository authRepository;
   final KeyValueStorageService keyValueStorageService; 
 
   AuthNotifier(
       {required this.authRepository, required this.keyValueStorageService})
-      : super(AuthState()); //estado inicial
+      : super(AuthState()){ checkAuthStatus();} //estado inicial
 
   Future<void> loginUser(String email, String password) async {
     await Future.delayed(const Duration(
@@ -43,7 +43,18 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   void registerUser(String email, String password, String fullName) async {}
 
-  void checkAuthStatus(String token) async {}
+  void checkAuthStatus() async {
+    final token = await keyValueStorageService.getValue<String>('token');
+
+    if (token ==null) return logout();
+    try {
+      final user = await authRepository.checkAuthStatus(token);
+      _setLoggedUser(user);
+    } catch (e) {
+      logout();
+      
+    }
+  }
 
   // metodo privado que centraliza a los anteriores
   void _setLoggedUser(User user) async {
