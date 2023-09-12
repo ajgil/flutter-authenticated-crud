@@ -10,12 +10,16 @@ void main() async {
   ));
 }
 
-class MainApp extends StatelessWidget {
+class MainApp extends ConsumerWidget {
   const MainApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    //* buenas practicas de riverpod, al estar en un build siempre tratamos con watch
     //print(Environment.apiUrl);
+
+    final appRouter = ref.watch(goRouterProvider);
+
     return MaterialApp.router(
       routerConfig: appRouter,
       theme: AppTheme().getTheme(),

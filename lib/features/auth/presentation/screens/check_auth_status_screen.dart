@@ -7,7 +7,7 @@ class CheckAuthStatusScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Center(
-        child: CircularProgressIndicator(strokeWidth: 2,),
+        child: CircularProgressIndicator(strokeWidth: 2),
       ),
     );
   }
