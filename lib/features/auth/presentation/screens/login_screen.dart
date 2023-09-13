@@ -54,18 +54,17 @@ class _LoginForm extends ConsumerWidget {
   const _LoginForm();
   void showSnackBar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message))
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // para tener acceso al state, no al NOTIFIER!!
     final loginForm = ref.watch(loginFormProvider);
-    ref.listen(authProvider, (previous, next) { 
-      if(next.errorMessage.isEmpty) return;
-      showSnackBar( context, next.errorMessage);
+    ref.listen(authProvider, (previous, next) {
+      if (next.errorMessage.isEmpty) return;
+      showSnackBar(context, next.errorMessage);
     });
 
     final textStyles = Theme.of(context).textTheme;
@@ -100,12 +99,12 @@ class _LoginForm extends ConsumerWidget {
               width: double.infinity,
               height: 60,
               child: CustomFilledButton(
-                text: 'Ingresar',
-                buttonColor: Colors.black,
-                onPressed: () {
-                  ref.read(loginFormProvider.notifier).onFormSubmit();
-                },
-              )),
+                  text: 'Ingresar',
+                  buttonColor: Colors.black,
+                  onPressed: loginForm.isPosting
+                      ? null
+                      : () =>
+                          ref.read(loginFormProvider.notifier).onFormSubmit)),
           const Spacer(flex: 2),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,

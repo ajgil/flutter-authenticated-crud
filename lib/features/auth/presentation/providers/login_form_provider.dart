@@ -38,11 +38,16 @@ class LoginFormNotifier extends StateNotifier<LoginFormState> {
   }
 
   onFormSubmit() {
-    //todo -> algo
+    
     _touchEveryField();
     if (!state.isValid) return;
 
+    //* bloquear el boton de login usando isPosting
+    state = state.copyWith( isPosting: true);
+
     loginUserCallback(state.email.value, state.password.value);
+    
+    state = state.copyWith( isPosting: false);
   }
 
   _touchEveryField() {
