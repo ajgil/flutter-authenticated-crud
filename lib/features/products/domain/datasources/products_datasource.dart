@@ -1,0 +1,8 @@
+// definicion de las reglas de negocio
+import '../entities/product.dart';
+
+abstract class ProductsDatasource {
+  Future<List<Product>> getProductsByPage({int limit = 10, int offset = 0});
+  Future<Product> getProductsById(String id);
+Future<<List<Product>> searchProductByTerm(String term);
+}
