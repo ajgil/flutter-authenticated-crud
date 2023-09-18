@@ -1,7 +1,7 @@
 // definicion de las reglas de negocio
 import '../entities/product.dart';
 
-abstract class ProductsDatasource {
+abstract class ProductsRepository {
   
   Future<List<Product>> getProductsByPage({int limit = 10, int offset = 0});
   

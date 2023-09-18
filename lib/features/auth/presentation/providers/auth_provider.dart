@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:teslo_shop/features/auth/domain/domain.dart';
 import 'package:teslo_shop/features/auth/infraestructure/infrastructure.dart';
-import 'package:teslo_shop/features/shared/infrastructure/services/key_value_storage_service.dart';
-import 'package:teslo_shop/features/shared/infrastructure/services/key_value_storage_service_impl.dart';
+import 'package:teslo_shop/features/shared/infraestructure/services/key_value_storage_service.dart';
+import 'package:teslo_shop/features/shared/infraestructure/services/key_value_storage_service_impl.dart';
 
 //! paso 2 crear el provider
 final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
