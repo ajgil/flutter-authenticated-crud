@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:go_router/go_router.dart';
 import 'package:teslo_shop/features/products/presentation/providers/products_provider.dart';
 import 'package:teslo_shop/features/products/presentation/widgets/widgets.dart';
 import 'package:teslo_shop/features/shared/shared.dart';
@@ -79,9 +80,10 @@ class _ProductsViewState extends ConsumerState<_ProductsView> {
               .length, //basado en los productos que disponemos en el state
           itemBuilder: (context, index) {
             final product = productsState.products[index];
-            return ProductCard(
-                product:
-                    product); //creamos la referencia y ganamos legibilidad y no hay un coste de memoria alta ya que es un puntero a la posición de memoria del objeto
+            return GestureDetector(
+              onTap: () => context.push('/product/${product.id}'),
+              child: ProductCard(product: product),
+            ); //creamos la referencia y ganamos legibilidad y no hay un coste de memoria alta ya que es un puntero a la posición de memoria del objeto
           },
         ));
   }
