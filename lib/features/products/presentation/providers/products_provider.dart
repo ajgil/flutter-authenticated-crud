@@ -69,7 +69,8 @@ class ProductsState {
 
   // ahora el metodo copyWith
   ProductsState copyWith(
-          {bool? isLastPage,
+          {
+            bool? isLastPage,
           int? limit,
           int? offset,
           bool? isLoading,
