@@ -46,7 +46,16 @@ class _ProductsViewState extends ConsumerState<_ProductsView> {
     super.initState();
     // leer el provider
     // todo -> infinite scroll pendiente
+    // 1- conectar el scrollController al grid
+    // 2- add listener al initState
+    scrollController.addListener(() {
+      if ((scrollController.position.pixels + 400) >=
+          scrollController.position.maxScrollExtent) {
+        ref.read(productsProvider.notifier).loadNextPage();
+      }
+    });
     ref.read(productsProvider.notifier).loadNextPage();
+    // 400 px margen de gracia hacer otra llamada
   }
 
   @override
@@ -61,6 +70,7 @@ class _ProductsViewState extends ConsumerState<_ProductsView> {
     return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: MasonryGridView.count(
+          controller: scrollController,
           physics: const BouncingScrollPhysics(),
           crossAxisCount: 2,
           mainAxisSpacing: 20,
