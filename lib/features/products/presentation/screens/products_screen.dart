@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:teslo_shop/features/products/presentation/providers/products_provider.dart';
+import 'package:teslo_shop/features/products/presentation/widgets/widgets.dart';
 import 'package:teslo_shop/features/shared/shared.dart';
 
 class ProductsScreen extends StatelessWidget {
@@ -60,6 +61,7 @@ class _ProductsViewState extends ConsumerState<_ProductsView> {
     return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: MasonryGridView.count(
+          physics: const BouncingScrollPhysics(),
           crossAxisCount: 2,
           mainAxisSpacing: 20,
           crossAxisSpacing: 35,
@@ -67,8 +69,9 @@ class _ProductsViewState extends ConsumerState<_ProductsView> {
               .length, //basado en los productos que disponemos en el state
           itemBuilder: (context, index) {
             final product = productsState.products[index];
-            return Text(product
-                .title); //creamos la referencia y ganamos legibilidad y no hay un coste de memoria alta ya que es un puntero a la posición de memoria del objeto
+            return ProductCard(
+                product:
+                    product); //creamos la referencia y ganamos legibilidad y no hay un coste de memoria alta ya que es un puntero a la posición de memoria del objeto
           },
         ));
   }
