@@ -1,11 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:formz/formz.dart';
+import 'package:teslo_shop/config/constants/environment.dart';
 import 'package:teslo_shop/features/products/domain/domain.dart';
 import 'package:teslo_shop/features/products/presentation/providers/products_repository_provider.dart';
 
 import '../../../../shared/shared.dart';
 
 // 3 - provider
-
 
 // 2 - Notifier
 class ProductFormNotifier extends StateNotifier<ProductFormState> {
@@ -26,6 +27,105 @@ class ProductFormNotifier extends StateNotifier<ProductFormState> {
           tags: product.tags.join(', '),
           images: product.images,
         ));
+
+  Future<bool> onFormSubmit() async {
+    _touchedEverything();
+    if (!state.isformValid) return false;
+
+    if (onSubmitCallback == null) return false;
+
+    final productLike = {
+      'id': state.id,
+      'title': state.title.value,
+      'price': state.price.value,
+      'description': state.description,
+      'slug': state.slug.value,
+      'stock': state.inStock.value,
+      'sizes': state.sizes,
+      'gender': state.gender,
+      'tags': state.tags.split(','),
+      'images': state.images
+          .map((e) => e.replaceAll('${Environment.apiUrl}/files/product/', ''))
+          .toList()
+    };
+    return true;
+    // todo -> llamar onSubmitCallback
+  }
+
+// forzar que todos los campos han sido manipulados tocado todos los inputs
+  void _touchedEverything() {
+    state = state.copyWith(
+        isformValid: Formz.validate([
+      Title.dirty(state.title.value),
+      Slug.dirty(state.slug.value),
+      Stock.dirty(state.inStock.value),
+      Price.dirty(state.price.value),
+    ]));
+  }
+
+  void onTitleChanged(String value) {
+    state = state.copyWith(
+      title: Title.dirty(value),
+      isformValid: Formz.validate([
+        Title.dirty(value),
+        Slug.dirty(state.slug.value),
+        Price.dirty(state.price.value),
+        Stock.dirty(state.inStock.value)
+      ]),
+    );
+  }
+
+  void onSlugChanged(String value) {
+    state = state.copyWith(
+      slug: Slug.dirty(value),
+      isformValid: Formz.validate([
+        Slug.dirty(value),
+        Title.dirty(state.title.value),
+        Price.dirty(state.price.value),
+        Stock.dirty(state.inStock.value)
+      ]),
+    );
+  }
+
+  void onPriceChanged(double value) {
+    state = state.copyWith(
+      price: Price.dirty(value),
+      isformValid: Formz.validate([
+        Price.dirty(value),
+        Title.dirty(state.title.value),
+        Slug.dirty(state.slug.value),
+        Stock.dirty(state.inStock.value)
+      ]),
+    );
+  }
+
+  void onStockChanged(int value) {
+    state = state.copyWith(
+      inStock: Stock.dirty(value),
+      isformValid: Formz.validate([
+        Stock.dirty(value),
+        Title.dirty(state.title.value),
+        Slug.dirty(state.slug.value),
+        Price.dirty(state.price.value)
+      ]),
+    );
+  }
+
+  void onSizedChanged(List<String> sizes) {
+    state = state.copyWith(sizes: sizes);
+  }
+
+  void onGenderChanged(String gender) {
+    state = state.copyWith(gender: gender);
+  }
+
+  void onDescriptionChanged(String description) {
+    state = state.copyWith(description: description);
+  }
+
+  void onTagsChanged(String tags) {
+    state = state.copyWith(tags: tags);
+  }
 }
 
 // 1 - State
