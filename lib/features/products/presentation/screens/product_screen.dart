@@ -1,26 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:teslo_shop/features/products/presentation/providers/providers.dart';
 
-class ProductScreen extends ConsumerStatefulWidget {
-
+class ProductScreen extends ConsumerWidget {
   final String productId;
-
-  const ProductScreen({ required this.productId, super.key});
-
-  @override
- ConsumerState createState() => ProductScreenState();
-}
-
-class ProductScreenState extends ConsumerState<ProductScreen> {
-  
+  const ProductScreen({super.key, required this.productId});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final productState = ref.watch(productProvider(productId)); // riverpod mantiene en memoria el product cuyo id sea el mismo si cambia el id elimina el objeto cargado
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Editar producto'),
+        title: const Text('editar producto'),
+        actions: [
+          IconButton(onPressed: ( ) {}, icon: const Icon(Icons.camera_outlined))
+        ],
       ),
-      body: Center(child: Text(widget.productId),),
+      body: Center(child: Text(productState.product?.title ?? 'cargando'),),
+      floatingActionButton: FloatingActionButton(onPressed: () {}, child: const Icon(Icons.save_as_outlined),),
     );
   }
 }
