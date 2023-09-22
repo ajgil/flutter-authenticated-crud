@@ -2,6 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:teslo_shop/features/products/domain/domain.dart';
 import 'package:teslo_shop/features/products/presentation/providers/products_repository_provider.dart';
 
+//* El objetivo de este provider es encontrar un producto
+
 // 3 - provider
 final productProvider = StateNotifierProvider.autoDispose
     .family<ProductNotifier, ProductState, String>((ref, productId) {
@@ -22,8 +24,28 @@ class ProductNotifier extends StateNotifier<ProductState> {
       : super(ProductState(id: productId)) {
     loadProduct();
   }
+
+  // creamos nuevo producto en blanco para la creación de uno nuevo
+  Product _newEmptyProduct() {
+    return Product(
+        id: 'new',
+        title: '',
+        price: 0,
+        description: '',
+        slug: '',
+        stock: 0,
+        sizes: [],
+        gender: '',
+        tags: [],
+        images: []);
+  }
+
   Future<void> loadProduct() async {
     try {
+      if (state.id == 'new') {
+        state= state.copyWith(isLoading: false, product: _newEmptyProduct());
+        return;
+      }
       final product = await productsRepository.getProductsById(state.id);
 
       state = state.copyWith(isLoading: false, product: product);
