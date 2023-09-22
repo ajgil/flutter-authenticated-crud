@@ -23,7 +23,13 @@ class ProductScreen extends ConsumerWidget {
           ? const FullScreenLoader()
           : _ProductView(product: productState.product!),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          if (productState.product == null) return;
+          // leer el provider para obtener el objeto y enviar el onSubmit
+          ref
+              .read(productFormProvider(productState.product!).notifier)
+              .onFormSubmit();
+        },
         child: const Icon(Icons.save_as_outlined),
       ),
     );
@@ -103,13 +109,15 @@ class _ProductInformation extends ConsumerWidget {
           const Text('Extras'),
           _SizeSelector(
             selectedSizes: productForm.sizes,
-            onSizesChanged: ref.read(productFormProvider(product).notifier).onSizedChanged,
-            ),
+            onSizesChanged:
+                ref.read(productFormProvider(product).notifier).onSizedChanged,
+          ),
           const SizedBox(height: 5),
           _GenderSelector(
             selectedGender: productForm.gender,
-            onGenderChanged: ref.read(productFormProvider(product).notifier).onGenderChanged,
-            ),
+            onGenderChanged:
+                ref.read(productFormProvider(product).notifier).onGenderChanged,
+          ),
           const SizedBox(height: 15),
           CustomProductField(
             isTopField: true,
@@ -126,15 +134,18 @@ class _ProductInformation extends ConsumerWidget {
             label: 'Descripción',
             keyboardType: TextInputType.multiline,
             initialValue: productForm.description,
-            onChanged: ref.read(productFormProvider(product).notifier).onDescriptionChanged,
+            onChanged: ref
+                .read(productFormProvider(product).notifier)
+                .onDescriptionChanged,
           ),
           CustomProductField(
             isBottomField: true,
             maxLines: 2,
             label: 'Tags (Separados por coma)',
             keyboardType: TextInputType.multiline,
-            initialValue: productForm.tags,   //product.tags.join(', '),
-            onChanged: ref.read(productFormProvider(product).notifier).onTagsChanged,
+            initialValue: productForm.tags, //product.tags.join(', '),
+            onChanged:
+                ref.read(productFormProvider(product).notifier).onTagsChanged,
           ),
           const SizedBox(height: 100),
         ],
@@ -183,8 +194,8 @@ class _GenderSelector extends StatelessWidget {
 
   final Function(String selectedGender) onGenderChanged;
 
-
-  const _GenderSelector({required this.selectedGender, required this.onGenderChanged});
+  const _GenderSelector(
+      {required this.selectedGender, required this.onGenderChanged});
 
   @override
   Widget build(BuildContext context) {

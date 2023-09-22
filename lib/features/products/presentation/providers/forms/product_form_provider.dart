@@ -9,16 +9,17 @@ import '../../../../shared/shared.dart';
 // 3 - provider
 final productFormProvider = StateNotifierProvider.autoDispose
     .family<ProductFormNotifier, ProductFormState, Product>((ref, product) {
-  
-  //final productsRepository = ref.watch(productsRepositoryProvider);
+  final createUpdateCallback =
+      ref.watch(productsRepositoryProvider).createUpdateProduct;
 
-  return ProductFormNotifier(product: product, //TODO: onSubmitCallback:
-  );
+  return ProductFormNotifier(
+      product: product, onSubmitCallback: createUpdateCallback);
 });
 
 // 2 - Notifier
 class ProductFormNotifier extends StateNotifier<ProductFormState> {
-  final void Function(Map<String, dynamic> productLike)? onSubmitCallback;
+  final Future<Product> Function(Map<String, dynamic> productLike)?
+      onSubmitCallback;
 
 //* necesitamos obtener los productId para que no haya duplicados
 // cuando se crea la primera instancia va a ejecutar el método createNewProduct
@@ -40,7 +41,8 @@ class ProductFormNotifier extends StateNotifier<ProductFormState> {
     _touchedEverything();
     if (!state.isformValid) return false;
 
-    if (onSubmitCallback == null) return false;
+    //TODO: regresar
+    //if (onSubmitCallback == null) return false;
 
     final productLike = {
       'id': state.id,
@@ -56,8 +58,16 @@ class ProductFormNotifier extends StateNotifier<ProductFormState> {
           .map((e) => e.replaceAll('${Environment.apiUrl}/files/product/', ''))
           .toList()
     };
-    return true;
-    // todo -> llamar onSubmitCallback
+
+   // todo -> llamar onSubmitCallback
+    try {
+      await onSubmitCallback!(productLike);
+      return true;
+    } catch (e) {
+      return false;
+    }
+
+ 
   }
 
 // forzar que todos los campos han sido manipulados tocado todos los inputs
