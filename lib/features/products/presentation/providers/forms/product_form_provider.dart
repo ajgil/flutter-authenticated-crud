@@ -7,6 +7,14 @@ import 'package:teslo_shop/features/products/presentation/providers/products_rep
 import '../../../../shared/shared.dart';
 
 // 3 - provider
+final productFormProvider = StateNotifierProvider.autoDispose
+    .family<ProductFormNotifier, ProductFormState, Product>((ref, product) {
+  
+  //final productsRepository = ref.watch(productsRepositoryProvider);
+
+  return ProductFormNotifier(product: product, //TODO: onSubmitCallback:
+  );
+});
 
 // 2 - Notifier
 class ProductFormNotifier extends StateNotifier<ProductFormState> {
