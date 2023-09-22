@@ -8,6 +8,12 @@ class ProductScreen extends ConsumerWidget {
   final String productId;
   const ProductScreen({super.key, required this.productId});
 
+  void showSnackBar(BuildContext context) {
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('producto actualizado')));
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final productState = ref.watch(productProvider(
@@ -28,7 +34,11 @@ class ProductScreen extends ConsumerWidget {
           // leer el provider para obtener el objeto y enviar el onSubmit
           ref
               .read(productFormProvider(productState.product!).notifier)
-              .onFormSubmit();
+              .onFormSubmit()
+              .then((value) {
+            if (!value) return;
+            showSnackBar(context);
+          });
         },
         child: const Icon(Icons.save_as_outlined),
       ),
@@ -56,8 +66,11 @@ class _ProductView extends ConsumerWidget {
         ),
         const SizedBox(height: 10),
         Center(
-            child: Text(productForm.title.value, style: textStyles.titleSmall,
-            textAlign: TextAlign.center,)),
+            child: Text(
+          productForm.title.value,
+          style: textStyles.titleSmall,
+          textAlign: TextAlign.center,
+        )),
         const SizedBox(height: 10),
         _ProductInformation(product: product),
       ],
