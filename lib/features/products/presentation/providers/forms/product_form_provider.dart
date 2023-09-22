@@ -2,23 +2,24 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:formz/formz.dart';
 import 'package:teslo_shop/config/constants/environment.dart';
 import 'package:teslo_shop/features/products/domain/domain.dart';
-import 'package:teslo_shop/features/products/presentation/providers/products_repository_provider.dart';
+import 'package:teslo_shop/features/products/presentation/providers/products_provider.dart';
 
 import '../../../../shared/shared.dart';
 
 // 3 - provider
 final productFormProvider = StateNotifierProvider.autoDispose
     .family<ProductFormNotifier, ProductFormState, Product>((ref, product) {
+  
   final createUpdateCallback =
-      ref.watch(productsRepositoryProvider).createUpdateProduct;
-
+      ref.watch(productsProvider.notifier).createOrUpdateProduct; //regresa boolean
+  
   return ProductFormNotifier(
       product: product, onSubmitCallback: createUpdateCallback);
 });
 
 // 2 - Notifier
 class ProductFormNotifier extends StateNotifier<ProductFormState> {
-  final Future<Product> Function(Map<String, dynamic> productLike)?
+  final Future<bool> Function(Map<String, dynamic> productLike)?
       onSubmitCallback;
 
 //* necesitamos obtener los productId para que no haya duplicados
@@ -42,7 +43,7 @@ class ProductFormNotifier extends StateNotifier<ProductFormState> {
     if (!state.isformValid) return false;
 
     //TODO: regresar
-    //if (onSubmitCallback == null) return false;
+    if (onSubmitCallback == null) return false;
 
     final productLike = {
       'id': state.id,
@@ -59,15 +60,12 @@ class ProductFormNotifier extends StateNotifier<ProductFormState> {
           .toList()
     };
 
-   // todo -> llamar onSubmitCallback
+    // todo -> llamar onSubmitCallback
     try {
-      await onSubmitCallback!(productLike);
-      return true;
+      return await onSubmitCallback!(productLike);
     } catch (e) {
       return false;
     }
-
- 
   }
 
 // forzar que todos los campos han sido manipulados tocado todos los inputs

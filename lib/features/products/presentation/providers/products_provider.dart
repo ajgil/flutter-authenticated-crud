@@ -9,7 +9,6 @@ import 'package:teslo_shop/features/products/presentation/providers/products_rep
 import '../../domain/entities/product.dart';
 import '../../domain/repositories/products_repository.dart';
 
-
 // 3 - provider
 final productsProvider =
     StateNotifierProvider<ProductsNotifier, ProductsState>((ref) {
@@ -25,6 +24,28 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
   ProductsNotifier({required this.productsRepository})
       : super(ProductsState()) {
     loadNextPage();
+  }
+
+  Future<bool> createOrUpdateProduct(Map<String, dynamic> productLike) async {
+    try {
+      final product = await productsRepository.createUpdateProduct(productLike);
+      // ver si el producto editado está en el provider, es decir que exista
+      // 1. si el producto no existe, lo añadimos al final
+      final isProductInList = state.products.any((el) => el.id == product.id);
+      if (!isProductInList) {
+        state = state.copyWith(products: [...state.products, product]);
+        return true;
+      }
+
+      // 2. el producto existe, lo actualizamos
+      state = state.copyWith(
+          products: state.products
+              .map((el) => (el.id == product.id) ? product : el)
+              .toList());
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   Future loadNextPage() async {
@@ -69,8 +90,7 @@ class ProductsState {
 
   // ahora el metodo copyWith
   ProductsState copyWith(
-          {
-            bool? isLastPage,
+          {bool? isLastPage,
           int? limit,
           int? offset,
           bool? isLoading,
