@@ -14,14 +14,51 @@ class ProductsDatasourceImpl extends ProductsDatasource {
             baseUrl: Environment.apiUrl,
             headers: {'Authorization': 'Bearer $accessToken'}));
 
+// cualquier imagen tomada con la camara o la galeria viene con un path tipo /data/com.myapp.shop/mi_picture.jpg
+// debemos identificar aquellas que traen / para limpiarlas
+// usamos principio de responsabilidad única
+
+// subir una unica imagen
+  Future<String> _uploadFile(String paht) async {
+    try {
+      final fileName = paht.split('/').last;
+      final FormData data = FormData.fromMap(
+          {'file': MultipartFile.fromFileSync(paht, filename: fileName)});
+
+      final response = await dio.post('/files/product', data: data);
+
+      return response.data['image'];
+    } catch (e) {
+      throw Exception();
+    }
+  }
+
+  Future<List<String>> _uploadPhotos(List<String> photos) async {
+    final photosToUpload =
+        photos.where((element) => element.contains('/')).toList();
+    final photosToIgnore =
+        photos.where((element) => !element.contains('/')).toList();
+
+    final List<Future<String>> uploadJob =
+        photosToUpload.map(_uploadFile).toList();
+    final newImages = await Future.wait(uploadJob);
+
+    return [...photosToIgnore, ...newImages];
+  }
+
   @override
   Future<Product> createUpdateProduct(Map<String, dynamic> productLike) async {
     // como hacer patch o update? Todo depende de si tenemos id de producto
     try {
       final String? productId = productLike['id'];
       final String method = (productId == null) ? 'POST' : 'PATCH';
-      final String url = (productId == null) ? '/products' : '/products/$productId';
+      final String url =
+          (productId == null) ? '/products' : '/products/$productId';
       productLike.remove('id');
+      productLike['images'] = await _uploadPhotos(productLike['images']);
+
+      //throw Exception(); // no ejecuta el codigo que viene debajo
+
       final response = await dio.request(url,
           data: productLike,
           options: Options(
