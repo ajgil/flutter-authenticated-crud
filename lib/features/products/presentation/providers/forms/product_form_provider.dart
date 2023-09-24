@@ -9,10 +9,10 @@ import '../../../../shared/shared.dart';
 // 3 - provider
 final productFormProvider = StateNotifierProvider.autoDispose
     .family<ProductFormNotifier, ProductFormState, Product>((ref, product) {
-  
-  final createUpdateCallback =
-      ref.watch(productsProvider.notifier).createOrUpdateProduct; //regresa boolean
-  
+  final createUpdateCallback = ref
+      .watch(productsProvider.notifier)
+      .createOrUpdateProduct; //regresa boolean
+
   return ProductFormNotifier(
       product: product, onSubmitCallback: createUpdateCallback);
 });
@@ -77,6 +77,10 @@ class ProductFormNotifier extends StateNotifier<ProductFormState> {
       Stock.dirty(state.inStock.value),
       Price.dirty(state.price.value),
     ]));
+  }
+
+  void updateProductImage(String paht) {
+    state = state.copyWith(images: [...state.images, paht]);
   }
 
   void onTitleChanged(String value) {

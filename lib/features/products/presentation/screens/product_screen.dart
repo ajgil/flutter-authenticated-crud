@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:teslo_shop/features/products/domain/domain.dart';
@@ -24,7 +25,28 @@ class ProductScreen extends ConsumerWidget {
         appBar: AppBar(
           title: const Text('editar producto'),
           actions: [
-            IconButton(onPressed: () {}, icon: const Icon(Icons.camera_outlined))
+            IconButton(
+                onPressed: () async {
+                  final photoPath =
+                      await CameraGalleryServiceImpl().takePhoto();
+                  if (photoPath == null) return;
+                  ref
+                      .read(productFormProvider(productState.product!).notifier)
+                      .updateProductImage(photoPath);
+                  photoPath;
+                },
+                icon: const Icon(Icons.camera_outlined)),
+            IconButton(
+                onPressed: () async {
+                  final photoPath =
+                      await CameraGalleryServiceImpl().selectPhoto();
+                  if (photoPath == null) return;
+                  ref
+                      .read(productFormProvider(productState.product!).notifier)
+                      .updateProductImage(photoPath);
+                  photoPath;
+                },
+                icon: const Icon(Icons.photo_library_outlined))
           ],
         ),
         body: productState.isLoading
@@ -246,25 +268,37 @@ class _ImageGallery extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // vamos a refactorizar para que se entienda un poco mejor
+    if (images.isEmpty) {
+      ClipRRect(
+          borderRadius: const BorderRadius.all(Radius.circular(20)),
+          child: Image.asset('assets/images/no-image.jpg', fit: BoxFit.cover));
+    }
+
     return PageView(
       scrollDirection: Axis.horizontal,
       controller: PageController(viewportFraction: 0.7),
-      children: images.isEmpty
-          ? [
-              ClipRRect(
-                  borderRadius: const BorderRadius.all(Radius.circular(20)),
-                  child: Image.asset('assets/images/no-image.jpg',
-                      fit: BoxFit.cover))
-            ]
-          : images.map((e) {
-              return ClipRRect(
-                borderRadius: const BorderRadius.all(Radius.circular(20)),
-                child: Image.network(
-                  e,
+      children: images.map((image) {
+        //Al usar la galeria o la cámara ahora tenemos imagenes tanto network como ficherols locales al file:///
+
+        late ImageProvider imageProvider;
+        if (image.startsWith('http')) {
+          imageProvider = NetworkImage(image);
+        } else {
+          imageProvider = FileImage(File(image));
+        }
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: ClipRRect(
+              borderRadius: const BorderRadius.all(Radius.circular(20)),
+              child: FadeInImage(
                   fit: BoxFit.cover,
-                ),
-              );
-            }).toList(),
+                  placeholder:
+                      const AssetImage('assets/loaders(bottle-loader.gif)'),
+                  image: imageProvider)),
+        );
+      }).toList(),
     );
   }
 }
