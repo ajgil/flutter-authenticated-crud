@@ -295,7 +295,7 @@ class _ImageGallery extends StatelessWidget {
               child: FadeInImage(
                   fit: BoxFit.cover,
                   placeholder:
-                      const AssetImage('assets/loaders(bottle-loader.gif)'),
+                      const AssetImage('assets/loaders/bottle-loader.gif'),
                   image: imageProvider)),
         );
       }).toList(),
